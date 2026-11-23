@@ -7,8 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlanRepository extends JpaRepository<Plan, Long> {
-    List<Plan> buscarTodos();
-    Optional<Plan> buscarPorId(Long id);
-    Plan guardar(Plan plan);
 }
 
