@@ -37,7 +37,7 @@ public class PlanController {
 
     @PostMapping
     public Plan crear(@RequestBody Plan nuevo) {
-        nuevo.setId(siguienteId);   // el servidor decide el id
+        nuevo.setId(siguienteId);
         siguienteId++;
         planes.add(nuevo);
         return nuevo;
