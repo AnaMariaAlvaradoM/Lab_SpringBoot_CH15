@@ -1,8 +1,14 @@
 package co.cuerpoactivo.cuerpo_activo_api.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Plan {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
     private int duracionMeses;
     private int precio;
