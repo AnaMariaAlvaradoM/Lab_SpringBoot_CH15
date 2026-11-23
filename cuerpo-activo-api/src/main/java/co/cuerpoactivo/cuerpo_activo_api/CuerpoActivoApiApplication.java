@@ -10,4 +10,4 @@ public class CuerpoActivoApiApplication {
 		SpringApplication.run(CuerpoActivoApiApplication.class, args);
 	}
 
-}
+ }
