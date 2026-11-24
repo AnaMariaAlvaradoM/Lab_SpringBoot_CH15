@@ -1,0 +1,9 @@
+{
+  "name": "lab-springboot-ch15",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lab Spring Boot calificable · Cuerpo Activo · API de planes · Generation Colombia Cohorte 15",
+  "scripts": {
+    "test": "node scripts/calificar.js"
+  }
+}
