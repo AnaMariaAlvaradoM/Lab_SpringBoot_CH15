@@ -1,6 +1,7 @@
 package cuerpo_activo_api.controller;
 
-import cuerpo_activo_api.model.Plan;
+import cuerpo_activo_api.dto.PlanRequest;
+import cuerpo_activo_api.dto.PlanResponse;
 import cuerpo_activo_api.service.PlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,26 +20,27 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> listar() {
-        return planService.buscarTodos();
+    public List<PlanResponse> listar() {
+        return planService.buscarTodos().stream().map(PlanResponse::desde).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> buscar(@PathVariable Long id) {
+    public ResponseEntity<PlanResponse> buscar(@PathVariable Long id) {
         return planService.buscarPorId(id)
-                .map(ResponseEntity::ok)
+                .map(plan -> ResponseEntity.ok(PlanResponse.desde(plan)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @PostMapping
-    public ResponseEntity<Plan> crear(@RequestBody Plan nuevo) {
-        Plan creado = planService.guardar(nuevo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(PlanResponse.desde(planService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Plan> actualizar(@PathVariable Long id, @RequestBody Plan cambios) {
-        return planService.actualizar(id, cambios)
-                .map(ResponseEntity::ok)
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @RequestBody PlanRequest request) {
+        return planService.actualizar(id, request)
+                .map(plan -> ResponseEntity.ok(PlanResponse.desde(plan)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
