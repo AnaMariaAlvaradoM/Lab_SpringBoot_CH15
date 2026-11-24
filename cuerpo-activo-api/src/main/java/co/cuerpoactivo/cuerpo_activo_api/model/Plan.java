@@ -1,9 +1,9 @@
 package co.cuerpoactivo.cuerpo_activo_api.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Plan {
@@ -13,6 +13,8 @@ public class Plan {
     private String nombre;
     private int duracionMeses;
     private int precio;
+    @OneToMany(mappedBy = "plan")
+    private List<Socio> socios = new ArrayList<>();
 
     public Plan (){
     }
@@ -54,5 +56,13 @@ public class Plan {
 
     public int getPrecio() {
         return precio;
+    }
+
+    public List<Socio> getSocios() {
+        return socios;
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = socios;
     }
 }
