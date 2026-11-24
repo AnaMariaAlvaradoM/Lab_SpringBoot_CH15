@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/planes
+Content-Type: application/json
+
+{
+  "nombre": "Plan semestral",
+  "duracionMeses": 6,
+  "precio": 630000
+}
