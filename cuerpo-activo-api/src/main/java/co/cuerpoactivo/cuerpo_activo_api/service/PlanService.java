@@ -17,15 +17,15 @@ public class PlanService {
     }
 
     public List<Plan> listar() {
-        return planRepository.buscarTodos();
+        return planRepository.findAll();
     }
 
     public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.buscarPorId(id);
+        return planRepository.findById(id);
     }
 
     public Plan crear(Plan nuevo) {
         nuevo.setId(null);
-        return planRepository.guardar(nuevo);
+        return planRepository.save(nuevo);
     }
 }
