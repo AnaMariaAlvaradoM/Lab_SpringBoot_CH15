@@ -19,11 +19,34 @@ public class PlanService {
     public List<Plan> listar() {
         return planRepository.findAll();
     }
+
     public Optional<Plan> buscarPorId(Long id) {
         return planRepository.findById(id);
     }
+
     public Plan crear(Plan nuevo) {
         nuevo.setId(null);
         return planRepository.save(nuevo);
     }
+
+    public Optional<Plan> actualizar(Long id, Plan cambios){
+        Optional<Plan> encontrado = planRepository.findById(id);
+        if (encontrado.isEmpty()) {
+            return Optional.empty();
+        }
+        Plan planes = encontrado.get();
+        planes.setNombre(cambios.getNombre());
+        planes.setDuracionMeses(cambios.getDuracionMeses());
+        planes.setPrecio(cambios.getPrecio());
+        return Optional.of(planRepository.save(planes));
+    }
+
+    public boolean eliminar(Long id){
+        if (!planRepository.existsById(id)) {
+            return false;
+        }
+        planRepository.deleteById(id);
+        return true;
+    }
+
 }
