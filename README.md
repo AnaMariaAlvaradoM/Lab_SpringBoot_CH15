@@ -51,7 +51,7 @@ Las fases se hacen **en orden, sobre el mismo proyecto**: la fase 2 reorganiza l
 
 ### Lo que necesitas instalado
 
-- **JDK 17** (el del módulo de Java; el `pom.xml` lo dice en `<java.version>`). En la terminal, `java -version` debe decir 17.
+- **JDK 25** (el del módulo de Java). En la terminal, `java -version` debe decir 25.
 - **Node.js** (el del módulo de JavaScript). Solo se usa para `npm test`.
 - **Git**, **IntelliJ IDEA** y **Postman**.
 - **PostgreSQL y pgAdmin** (los del módulo de SQL), para la fase 3.
@@ -132,9 +132,6 @@ Lab_SpringBoot_CH15/
 │   ├── pom.xml
 │   ├── mvnw
 │   ├── mvnw.cmd
-│   ├── .mvn/
-│   ├── HELP.md
-│   ├── .gitignore
 │   └── src/
 ├── tests/
 ├── scripts/
@@ -177,38 +174,10 @@ En el paquete `controller`, crea `PlanController.java`, con `@RestController` y 
 
 **El `id` lo decide el servidor:** si alguien envía `"id": 99`, tu API lo ignora y asigna el siguiente número.
 
-**Respuestas que debes ver en Postman:**
-
-`GET http://localhost:8080/api/planes` →
-
-```json
-[
-  { "id": 1, "nombre": "Plan mensual", "duracionMeses": 1, "precio": 120000 },
-  { "id": 2, "nombre": "Plan trimestral", "duracionMeses": 3, "precio": 330000 },
-  { "id": 3, "nombre": "Plan anual", "duracionMeses": 12, "precio": 1200000 }
-]
-```
-
-`GET http://localhost:8080/api/planes/1` →
-
-```json
-{ "id": 1, "nombre": "Plan mensual", "duracionMeses": 1, "precio": 120000 }
-```
-
-(Si el plan no existe, devuelve `404`.)
-
-`POST http://localhost:8080/api/planes` con el body `{ "nombre": "Plan semestral", "duracionMeses": 6, "precio": 630000 }` → responde el plan con el id nuevo:
-
-```json
-{ "id": 4, "nombre": "Plan semestral", "duracionMeses": 6, "precio": 630000 }
-```
-
 ### ✅ Checklist de la fase 1
 
 - [ ] El proyecto arranca y la consola dice `Tomcat started on port 8080`.
-- [ ] Compila a mano: `cd cuerpo-activo-api && ./mvnw clean compile`.
 - [ ] En Postman, `GET http://localhost:8080/api/planes` muestra los 3 planes.
-- [ ] En Postman, `GET http://localhost:8080/api/planes/1` muestra el plan mensual.
 - [ ] `POST` con `{ "nombre": "Plan semestral", "duracionMeses": 6, "precio": 630000 }` responde el plan con `id` 4.
 - [ ] `npm test` muestra los ejercicios 01 y 02 en ✅ (nota **2.5**).
 
@@ -224,61 +193,6 @@ Reorganiza lo de la fase 1 en tres capas. La API debe responder **igual** que an
 | `PlanRepositoryEnMemoria` | `repository` | `@Repository`. Implementa la interfaz con la lista de los 3 planes y un contador `siguienteId` que empieza en 4 |
 | `PlanService` | `service` | `@Service`. Recibe un `PlanRepository` **por su constructor** |
 | `PlanController` | `controller` | Recibe un `PlanService` **por su constructor**. Ya no tiene la lista |
-
-**Esqueleto de cómo queda (es un modelo: escribe el tuyo):**
-
-```java
-// PlanService.java — paquete service
-@Service
-public class PlanService {
-    private final PlanRepository repositorio;
-
-    public PlanService(PlanRepository repositorio) {
-        this.repositorio = repositorio;
-    }
-
-    public List<Plan> buscarTodos() {
-        return repositorio.buscarTodos();
-    }
-
-    public Optional<Plan> buscarPorId(Long id) {
-        return repositorio.buscarPorId(id);
-    }
-
-    public Plan guardar(Plan nuevo) {
-        nuevo.setId(null);
-        return repositorio.guardar(nuevo);
-    }
-}
-```
-
-```java
-// PlanController.java — paquete controller
-@RestController
-@RequestMapping("/api/planes")
-public class PlanController {
-    private final PlanService planService;
-
-    public PlanController(PlanService planService) {
-        this.planService = planService;
-    }
-
-    @GetMapping
-    public List<Plan> listar() {
-        return planService.buscarTodos();
-    }
-
-    @GetMapping("/{id}")
-    public Optional<Plan> buscar(@PathVariable Long id) {
-        return planService.buscarPorId(id);
-    }
-
-    @PostMapping
-    public Plan crear(@RequestBody Plan plan) {
-        return planService.guardar(plan);
-    }
-}
-```
 
 ### ✅ Checklist de la fase 2
 
@@ -448,15 +362,6 @@ Este taller **no tiene fecha límite** por ahora. Si la profe pone una, después
 
 ---
 
-## Resumen del flujo de trabajo
-
-1. **Clona tu fork** y trabaja dentro de la carpeta `cuerpo-activo-api` (Paso 2).
-2. **Haz las fases 1 → 4, en orden, sobre el mismo proyecto**: después de cada fase, revisa con `npm test` y haz `git commit` + `git push`.
-3. **Abre el Pull Request una sola vez**, con tu nombre completo como título; las fases 2 y 3 se suman al mismo PR.
-4. **Corrige según la nota:** el robot te avisa en el PR qué falta.
-
----
-
 ## Archivos que NO debes modificar
 
 - La carpeta `tests/`
@@ -488,7 +393,7 @@ En el Initializr quedó marcado **Gradle**. Vuelve a generarlo con **Maven**.
 
 ### «Maven no encuentra Java» o «Tu Java es más viejo que el que pide el pom.xml»
 
-`java -version` debe decir 17. Si no, reinstala el JDK 17 con **Set JAVA_HOME variable** activado y reinicia la terminal.
+`java -version` debe decir 25. Si no, reinstala el JDK 25 de Adoptium con **Set JAVA_HOME variable** activado y reinicia la terminal.
 
 ### «Tu proyecto no compila (archivo, línea N): …»
 
