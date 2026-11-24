@@ -1,42 +1,33 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/planes")
 public class PlanController {
 
-    private final List<Plan> plans = new ArrayList<>();
+    private final PlanService planService;
 
-    public PlanController() {
-        plans.add(new Plan(1L, "Plan mensual", 1, 120000));
-        plans.add(new Plan(1L, "Plan trimestral", 3, 330000));
-        plans.add(new Plan(1L, "Plan anual", 12, 1200000));
+    public PlanController(PlanService planService) {
+        this.planService = planService;
     }
 
     @GetMapping
-    public List<Plan> lista() {
-        return plans;
+    public List<Plan> listar() {
+        return planService.listar();
     }
 
     @GetMapping("/{id}")
     public Plan buscarporId(@PathVariable Long id) {
-        for (Plan plan : plans) {
-            if (plan.getId().equals(id)){
-                return plan;
-            }
-        }
-        return null;
+        return planService.buscarPorId(id).orElse(null);
     }
 
     @PostMapping
     public Plan crear(@RequestBody Plan nuevo) {
-        nuevo.setId(plans.size() + 1L);
-        plans.add(nuevo);
-        return nuevo;
+        return planService.crear(nuevo);
     }
 }
