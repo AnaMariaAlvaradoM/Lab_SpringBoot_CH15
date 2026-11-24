@@ -27,4 +27,20 @@ public class PlanService {
         nuevo.setId(null);
         return planRepository.save(nuevo);
     }
+    public java.util.Optional<Plan> actualizar(Long id, Plan cambios) {
+        return planRepository.findById(id).map(planExistente -> {
+            planExistente.setNombre(cambios.getNombre());
+            planExistente.setDuracionMeses(cambios.getDuracionMeses());
+            planExistente.setPrecio(cambios.getPrecio());
+            return planRepository.save(planExistente);
+        });
+    }
+
+    public boolean eliminar(Long id) {
+        if (planRepository.existsById(id)) {
+            planRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
