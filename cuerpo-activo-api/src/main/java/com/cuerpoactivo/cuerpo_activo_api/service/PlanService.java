@@ -2,6 +2,7 @@ package com.cuerpoactivo.cuerpo_activo_api.service;
 
 import com.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import com.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
+import com.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,37 +13,32 @@ public class PlanService {
 
     private final PlanRepository planRepository;
 
-    // Inyección de dependencias por constructor
     public PlanService(PlanRepository planRepository) {
         this.planRepository = planRepository;
     }
 
-    // Listar todos los planes
     public List<Plan> listar() {
         return planRepository.findAll();
     }
 
-    // Buscar un plan por ID
     public Optional<Plan> buscarPorId(Long id) {
         return planRepository.findById(id);
     }
 
-    // Crear un nuevo plan
-    public Plan crear(Plan nuevo) {
-        nuevo.setId(null);
-        return planRepository.save(nuevo);
+    public Plan crear(PlanRequest request) {
+        return planRepository.save(request.aEntidad());
     }
-    // Actualizar un plan existente
-    public Optional<Plan> actualizar(Long id, Plan cambios) {
+
+    public Optional<Plan> actualizar(Long id, PlanRequest request) {
         return planRepository.findById(id).map(plan -> {
-            plan.setNombre(cambios.getNombre());
-            plan.setDuracionMeses(cambios.getDuracionMeses());
-            plan.setPrecio(cambios.getPrecio());
+            plan.setNombre(request.nombre());
+            plan.setDuracionMeses(request.duracionMeses());
+            plan.setPrecio(request.precio());
 
             return planRepository.save(plan);
         });
     }
-    // Eliminar un plan
+
     public boolean eliminar(Long id) {
         if (planRepository.existsById(id)) {
             planRepository.deleteById(id);

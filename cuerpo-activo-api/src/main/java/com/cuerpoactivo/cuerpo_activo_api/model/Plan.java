@@ -5,6 +5,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
+import jakarta.persistence.OneToMany;
+import java.util.List;
+import java.util.ArrayList;
+
 @Entity
 public class Plan {
 
@@ -15,6 +19,17 @@ public class Plan {
     private String nombre;
     private int duracionMeses;
     private int precio;
+
+    @OneToMany(mappedBy = "plan")
+    private List<Socio> socios = new ArrayList<>();
+
+    public List<Socio> getSocios() {
+        return socios;
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = socios;
+    }
 
     // Constructor vacío
     public Plan() {
