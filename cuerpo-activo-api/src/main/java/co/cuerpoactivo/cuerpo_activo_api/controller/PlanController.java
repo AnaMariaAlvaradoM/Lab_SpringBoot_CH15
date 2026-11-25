@@ -27,9 +27,13 @@ public class PlanController {
         //planes.add(new Plan(3L, "Plan anual", 12, 1200000));
 
     @GetMapping
-    public List<Plan> listar() {
-        return planService.listar();
+    public List<PlanResponse> listar() {
+        return planService.listar()
+                .stream()
+                .map(PlanResponse::desde)
+                .toList();
     }
+    //public List<Plan> listar() { return planService.listar();
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id) {
@@ -42,9 +46,28 @@ public class PlanController {
     // public Plan buscarPorId(@PathVariable Long id) { return planService.buscarPorId(id).orElse(null);}
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crear(@PathVariable Long id, @RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
         Plan creado = planService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(creado));
     }
     //public Plan crear(@RequestBody Plan nuevo) { return planService.crear(nuevo);}
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PlanResponse> actualizar(
+            @PathVariable Long id,
+            @RequestBody PlanRequest request) {
+
+        return planService.actualizar(id, request)
+                .map(plan -> ResponseEntity.ok(PlanResponse.desde(plan)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        if (!planService.eliminar(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
 }

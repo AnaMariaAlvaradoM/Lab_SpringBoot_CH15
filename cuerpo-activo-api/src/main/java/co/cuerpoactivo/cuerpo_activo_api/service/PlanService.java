@@ -29,4 +29,23 @@ public class PlanService {
         Plan nuevo = request.aEntidad();
         return planRepository.save(nuevo);
     }
+
+    public Optional<Plan> actualizar(Long id, PlanRequest request) {
+        return planRepository.findById(id).map(plan -> {
+            plan.setNombre(request.nombre());
+            plan.setDuracionMeses(request.duracionMeses());
+            plan.setPrecio(request.precio());
+
+            return planRepository.save(plan);
+        });
+    }
+
+    public boolean eliminar(Long id) {
+        if (!planRepository.existsById(id)) {
+            return false;
+        }
+
+        planRepository.deleteById(id);
+        return true;
+    }
 }
