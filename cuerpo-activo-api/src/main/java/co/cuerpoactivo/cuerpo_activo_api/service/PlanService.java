@@ -1,5 +1,6 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class PlanService {
         return planRepository.findById(id);
     }
 
-    public Plan crear(Plan nuevo) {
-        nuevo.setId(null);
+    public Plan crear(PlanRequest request) {
+        Plan nuevo = request.aEntidad();
         return planRepository.save(nuevo);
     }
 }
