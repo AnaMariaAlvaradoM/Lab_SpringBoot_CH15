@@ -1,6 +1,7 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
@@ -25,32 +26,31 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.findById(id);
-    }
-
-    public Optional<Plan> crear(PlanRequest request) {
-        Plan nuevo = request.aEntidad();
-        return Optional.of(planRepository.save(nuevo));
-    }
-
-    public Optional<Plan> actualizar(Long id, PlanRequest request) {
+    public Plan buscarPorId(Long id) {
         Optional<Plan> encontrado = planRepository.findById(id);
         if (encontrado.isEmpty()) {
-            return Optional.empty();
+            throw new RecursoNoEncontradoException("No existe el plan con id " + id);
         }
-        Plan plan = encontrado.get();
+        return encontrado.get();
+    }
+
+    public Plan crear(PlanRequest request) {
+        Plan nuevo = request.aEntidad();
+        return planRepository.save(nuevo);
+    }
+
+    public Plan actualizar(Long id, PlanRequest request) {
+        Plan plan = buscarPorId(id);
         plan.setNombre(request.nombre());
         plan.setDuracionMeses(request.duracionMeses());
         plan.setPrecio(request.precio());
-        return Optional.of(planRepository.save(plan));
+        return planRepository.save(plan);
     }
 
-    public boolean eliminar(Long id) {
+    public void eliminar(Long id) {
         if (!planRepository.existsById(id)) {
-            return false;
+            throw new RecursoNoEncontradoException("No existe el plan con id " + id);
         }
         planRepository.deleteById(id);
-        return true;
     }
 }
