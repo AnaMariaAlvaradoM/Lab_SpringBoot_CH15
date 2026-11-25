@@ -5,6 +5,7 @@ import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public class PlanController {
     }
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crear(@Valid @RequestBody PlanRequest request) {
 //        nuevo.setId(planes.size() + 1L);
 //        planes.add(nuevo);
 //        return nuevo;
@@ -72,7 +73,7 @@ public class PlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest request) {
         Optional<Plan> actualizado = planService.actualizar(id, request);
         if (actualizado.isEmpty()) {
             return ResponseEntity.notFound().build();

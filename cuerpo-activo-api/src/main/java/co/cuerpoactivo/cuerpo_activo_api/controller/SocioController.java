@@ -7,6 +7,7 @@ import co.cuerpoactivo.cuerpo_activo_api.dto.SocioResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
 import co.cuerpoactivo.cuerpo_activo_api.service.SocioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class SocioController {
     }
 
     @PostMapping
-    public ResponseEntity<SocioResponse> crear(@RequestBody SocioRequest request) {
+    public ResponseEntity<SocioResponse> crear(@Valid @RequestBody SocioRequest request) {
 
         Optional<Socio> creado = socioService.crear(request);
         if (creado.isEmpty()) {
