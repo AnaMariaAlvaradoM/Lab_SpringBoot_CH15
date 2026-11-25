@@ -3,6 +3,7 @@ package co.cuerpoactivo.cuerpo_activo_api.controller;
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioResponse;
 import co.cuerpoactivo.cuerpo_activo_api.service.SocioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class SocioController {
     }
 
     @PostMapping
-    public ResponseEntity<SocioResponse> crearSocio(@RequestBody SocioRequest request) {
+    public ResponseEntity<SocioResponse> crearSocio(@Valid @RequestBody SocioRequest request) {
         return socioService.crear(request)
                 .map(SocioResponse::desde)
                 .map(respuesta -> ResponseEntity.status(HttpStatus.CREATED).body(respuesta))

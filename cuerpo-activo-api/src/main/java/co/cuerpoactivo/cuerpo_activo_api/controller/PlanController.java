@@ -3,6 +3,7 @@ package co.cuerpoactivo.cuerpo_activo_api.controller;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,13 @@ public class PlanController {
     }
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crearPlan(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crearPlan(@Valid @RequestBody PlanRequest request) {
         PlanResponse creado = planService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanResponse> actualizarPlan(@PathVariable Long id, @RequestBody PlanRequest cambios) {
+    public ResponseEntity<PlanResponse> actualizarPlan(@PathVariable Long id, @Valid @RequestBody PlanRequest cambios) {
         return planService.actualizar(id, cambios)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
