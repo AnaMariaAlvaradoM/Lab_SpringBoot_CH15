@@ -1,10 +1,19 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
-import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,36 +28,39 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> obtenerPlanes() {
-        return planService.buscarTodos();
+    public List<PlanResponse> listar() {
+        return planService.listar()
+                .stream()
+                .map(PlanResponse::desde)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> obtenerPlanPorId(@PathVariable long id) {
+    public ResponseEntity<PlanResponse> buscarPorId(@PathVariable long id) {
         return planService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .map(plan -> ResponseEntity.ok(PlanResponse.desde(plan)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Plan> crearPlan(@RequestBody Plan nuevoPlan) {
-        Plan creado = planService.guardar(nuevoPlan);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+        Plan creado = planService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(creado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Plan> actualizarPlan(@PathVariable Long id, @RequestBody Plan cambios) {
-        return planService.actualizar(id, cambios)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @RequestBody PlanRequest request) {
+        return planService.actualizar(id, request)
+                .map(planActualizado -> ResponseEntity.ok(PlanResponse.desde(planActualizado)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarPlan(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (planService.eliminar(id)) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
     }
 
 

@@ -2,6 +2,7 @@ package co.cuerpoactivo.cuerpo_activo_api.service;
 
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class PlanService {
         this.planRepository = planRepository;
     }
 
-    public List<Plan> buscarTodos() {
+    public List<Plan> listar() {
         return planRepository.findAll();
     }
 
@@ -24,16 +25,17 @@ public class PlanService {
         return planRepository.findById(id);
     }
 
-    public Plan guardar(Plan nuevoPlan) {
+    public Plan crear(PlanRequest request) {
+        Plan nuevoPlan = request.aEntidad();
         nuevoPlan.setId(null);
         return planRepository.save(nuevoPlan);
     }
 
-    public Optional<Plan> actualizar(Long id, Plan cambios) {
+    public Optional<Plan> actualizar(Long id, PlanRequest request) {
         return planRepository.findById(id).map(planExistente -> {
-            planExistente.setNombre(cambios.getNombre());
-            planExistente.setDuracionMeses(cambios.getDuracionMeses());
-            planExistente.setPrecio(cambios.getPrecio());
+            planExistente.setNombre(request.nombre());
+            planExistente.setDuracionMeses(request.duracionMeses());
+            planExistente.setPrecio(request.precio());
             return planRepository.save(planExistente);
         });
     }
