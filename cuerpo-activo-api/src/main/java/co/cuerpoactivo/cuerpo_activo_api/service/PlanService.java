@@ -26,7 +26,7 @@ public class PlanService {
     }
 
     public Plan crear(PlanRequest request) {
-        Plan planGuardado = planRepository.save(request.aEntidad());
+        Plan planGuardado = request.aEntidad();
         return planRepository.save(planGuardado);
     }
 
@@ -38,7 +38,7 @@ public class PlanService {
         Plan planes = encontrado.get();
         planes.setNombre(request.nombre());
         planes.setDuracionMeses(request.duracionMeses());
-        planes.setPrecio(request.Precio());
+        planes.setPrecio(request.precio());
         return Optional.of(planRepository.save(planes));
     }
 
