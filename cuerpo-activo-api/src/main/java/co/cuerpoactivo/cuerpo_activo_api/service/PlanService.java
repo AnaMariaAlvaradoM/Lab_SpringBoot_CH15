@@ -18,15 +18,15 @@ public class PlanService {
     }
 
     public List<Plan> buscarTodos() {
-        return planRepository.buscarTodos();
+        return planRepository.findAll();
     }
 
     public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.buscarPorId(id);
+        return planRepository.findById(id);
     }
 
     public Plan guardar(Plan plan) {
         plan.setId(null);
-        return planRepository.guardar(plan);
+        return planRepository.save(plan);
     }
 }

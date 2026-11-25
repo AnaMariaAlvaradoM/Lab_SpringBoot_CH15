@@ -1,17 +1,25 @@
+
 package co.cuerpoactivo.cuerpo_activo_api.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Plan {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
     private int duracionMeses;
     private int precio;
 
-    // Constructor vacío
     public Plan() {
     }
 
-    // Constructor con todos los atributos
     public Plan(Long id, String nombre, int duracionMeses, int precio) {
         this.id = id;
         this.nombre = nombre;
@@ -19,7 +27,6 @@ public class Plan {
         this.precio = precio;
     }
 
-    // Getters y setters
     public Long getId() {
         return id;
     }
