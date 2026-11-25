@@ -30,19 +30,19 @@ public class PlanService {
         return planRepository.save(planGuardado);
     }
 
-    public Optional<Plan> actualizar(Long id, PlanRequest request){
+    public Optional<Plan> actualizar(Long id, PlanRequest request) {
         Optional<Plan> encontrado = planRepository.findById(id);
         if (encontrado.isEmpty()) {
             return Optional.empty();
         }
         Plan planes = encontrado.get();
         planes.setNombre(request.nombre());
-        planes.setDuracionMeses(request.DuracionMeses());
+        planes.setDuracionMeses(request.duracionMeses());
         planes.setPrecio(request.Precio());
         return Optional.of(planRepository.save(planes));
     }
 
-    public boolean eliminar(Long id){
+    public boolean eliminar(Long id) {
         if (!planRepository.existsById(id)) {
             return false;
         }

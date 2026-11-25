@@ -60,4 +60,12 @@ public class Plan {
     public void setPrecio(int precio) {
         this.precio = precio;
     }
+
+    public List<Socio> getSocios() {
+        return socios;
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = socios;
+    }
 }
