@@ -1,12 +1,16 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
+
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
 
-import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/planes")
@@ -19,49 +23,38 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> listarPlanes() {
-        return planService.buscarTodos();
+    public List<PlanResponse> listarPlanes() {
+        List<Plan> planes = planService.buscarTodos();
+        List<PlanResponse> respuesta = new ArrayList<>();
+
+        for (Plan plan : planes) {
+            respuesta.add(PlanResponse.desde(plan));
+        }
+
+        return respuesta;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> obtenerPorId(@PathVariable Long id) {
-        Optional<Plan> plan = planService.buscarPorId(id);
-
-        if (plan.isPresent()) {
-            return ResponseEntity.ok(plan.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<PlanResponse> obtenerPorId(@PathVariable Long id) {
+        Plan plan = planService.buscarPorId(id);
+        return ResponseEntity.ok(PlanResponse.desde(plan));
     }
 
     @PostMapping
-    public ResponseEntity<Plan> crearPlan(@RequestBody Plan plan) {
-        Plan guardado = planService.guardar(plan);
-        return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
-
+    public ResponseEntity<PlanResponse> crearPlan(@Valid @RequestBody PlanRequest request) {
+        Plan guardado = planService.guardar(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(guardado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Plan> actualizarPlan(@PathVariable Long id, @RequestBody Plan cambios) {
-        Optional<Plan> actualizado = planService.actualizar(id, cambios);
-
-        if (actualizado.isPresent()) {
-            return ResponseEntity.ok(actualizado.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<PlanResponse> actualizarPlan(@PathVariable Long id, @Valid @RequestBody PlanRequest cambios) {
+        Plan actualizado = planService.actualizar(id, cambios);
+        return ResponseEntity.ok(PlanResponse.desde(actualizado));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> borrarPlan(@PathVariable Long id){
-        boolean borrar = planService.eliminar(id);
-
-        if(borrar){
-            return ResponseEntity.noContent().build();
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> borrarPlan(@PathVariable Long id) {
+        planService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
-
-    }
-
+}

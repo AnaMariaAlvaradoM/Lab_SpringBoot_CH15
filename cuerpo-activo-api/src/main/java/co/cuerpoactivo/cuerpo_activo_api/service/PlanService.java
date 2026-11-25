@@ -1,10 +1,11 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
-import org.springframework.stereotype.Service;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
+import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PlanService {
@@ -19,27 +20,27 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.findById(id);
+    public Plan buscarPorId(Long id) {
+        return planRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el plan con id " + id));
     }
 
-    public Plan guardar(Plan plan) {
+    public Plan guardar(PlanRequest request) {
+        Plan plan = request.aEntidad();
         plan.setId(null);
         return planRepository.save(plan);
     }
 
-    public Optional<Plan> actualizar(Long id, Plan cambios){
-        return planRepository.findById(id).map(planExiste -> {planExiste.setNombre(cambios.getNombre());
-            planExiste.setDuracionMeses(cambios.getDuracionMeses());
-            planExiste.setPrecio(cambios.getPrecio());
-            return planRepository.save(planExiste);
-        });
+    public Plan actualizar(Long id, PlanRequest cambios) {
+        Plan existente = buscarPorId(id);
+        existente.setNombre(cambios.nombre());
+        existente.setDuracionMeses(cambios.duracionMeses());
+        existente.setPrecio(cambios.precio());
+        return planRepository.save(existente);
     }
-    public boolean eliminar(Long id) {
-        if(!planRepository.existsById(id)){
-            return false;
-        }
-        planRepository.deleteById(id);
-        return true;
-        }
+
+    public void eliminar(Long id) {
+        Plan existente = buscarPorId(id);
+        planRepository.delete(existente);
     }
+}
