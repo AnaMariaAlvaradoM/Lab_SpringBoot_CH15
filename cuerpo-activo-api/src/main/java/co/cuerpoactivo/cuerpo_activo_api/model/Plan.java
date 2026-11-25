@@ -1,5 +1,7 @@
 package co.cuerpoactivo.cuerpo_activo_api.model;
-
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,6 +23,17 @@ public class Plan {
         this.nombre = nombre;
         this.duracionMeses = duracionMeses;
         this.precio = precio;
+    }
+
+    @OneToMany(mappedBy = "plan")
+    private List<Socio> socios = new ArrayList<>();
+
+    public List<Socio> getSocios() {
+        return socios;
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = socios;
     }
 
     public Long getId() {
