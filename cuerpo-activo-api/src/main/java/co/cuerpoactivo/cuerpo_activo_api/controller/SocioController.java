@@ -5,6 +5,8 @@ import co.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioResponse;
 import co.cuerpoactivo.cuerpo_activo_api.service.SocioService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,21 +35,23 @@ public class SocioController {
     public ResponseEntity<SocioResponse> buscarPorId(
             @PathVariable Long id) {
 
-        return socioService.buscarPorId(id)
-                .map(SocioResponse::desde)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        SocioResponse respuesta = SocioResponse.desde(
+                socioService.buscarPorId(id)
+        );
+
+        return ResponseEntity.ok(respuesta);
     }
 
     @PostMapping
     public ResponseEntity<SocioResponse> crear(
-            @RequestBody SocioRequest request) {
+            @Valid @RequestBody SocioRequest request) {
 
-        return socioService.crear(request)
-                .map(SocioResponse::desde)
-                .map(socio -> ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(socio))
-                .orElse(ResponseEntity.badRequest().build());
+        SocioResponse respuesta = SocioResponse.desde(
+                socioService.crear(request)
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(respuesta);
     }
 }
