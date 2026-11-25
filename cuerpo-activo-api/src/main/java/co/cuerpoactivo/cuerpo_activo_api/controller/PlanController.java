@@ -1,49 +1,56 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/planes")
 public class PlanController {
 
-    private List<Plan> planes = new ArrayList<>();
+    private final PlanService planService;
 
-    public PlanController() {
-        planes.add(new Plan(1L, "Plan mensual", 1, 120000));
-        planes.add(new Plan(2L, "Plan trimestral", 3, 330000));
-        planes.add(new Plan(3L, "Plan anual", 12, 1200000));
+    public PlanController(PlanService planService) {
+        this.planService = planService;
     }
 
     @GetMapping
-    public List<Plan> obtenerTodos() {
-        return planes;
+    public ResponseEntity<List<Plan>> obtenerTodos() {
+        return ResponseEntity.ok(planService.buscarTodos());
     }
 
     @GetMapping("/{id}")
-    public Plan obtenerPorId(@PathVariable Long id) {
-
-        for (Plan plan : planes) {
-            if (plan.getId().equals(id)) {
-                return plan;
-            }
-        }
-
-        return null;
+    public ResponseEntity<Plan> obtenerPorId(@PathVariable Long id) {
+        return planService.buscarPorId(id).map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Plan guardar(@RequestBody Plan nuevoPlan) {
+    public ResponseEntity<Plan> guardar(@RequestBody Plan plan) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(planService.guardar(plan));
 
-        Long nuevoId = (long) (planes.size() + 1);
-
-        nuevoPlan.setId(nuevoId);
-
-        planes.add(nuevoPlan);
-
-        return nuevoPlan;
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Plan> actualizar(@PathVariable Long id, @RequestBody Plan plan) {
+        return planService.actualizar(id, plan)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        if (planService.buscarPorId(id).isPresent()) {
+            planService.borrar(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
 }
