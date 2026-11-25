@@ -1,10 +1,29 @@
 package co.cuerpoactivo.cuerpo_activo.api.model;
 
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
 public class Plan {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
     private int duracionMeses;
     private int precio;
+
+    @OneToMany(mappedBy = "plan")
+    private List<Socio> socios = new ArrayList<>();
+
+    public List<Socio> getSocios() {
+        return socios;
+    }
+
+    public void setSocios(List<Socio> socios) {
+        this.socios = socios;
+    }
 
     public Plan() {
     }

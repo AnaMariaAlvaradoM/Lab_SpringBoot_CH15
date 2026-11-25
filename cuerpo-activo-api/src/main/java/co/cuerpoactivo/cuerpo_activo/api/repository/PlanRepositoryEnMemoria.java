@@ -1,4 +1,4 @@
-package co.cuerpoactivo.cuerpo_activo.api.repository;
+/*package co.cuerpoactivo.cuerpo_activo.api.repository;
 
 import co.cuerpoactivo.cuerpo_activo.api.model.Plan;
 import org.springframework.stereotype.Repository;
@@ -44,4 +44,4 @@ public class PlanRepositoryEnMemoria implements PlanRepository{
         }
         return plan;
     }
-}
+}*/
