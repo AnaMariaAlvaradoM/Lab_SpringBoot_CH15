@@ -32,7 +32,7 @@ public class SocioService {
     public Optional<Socio> crear(SocioRequest request) {
         Optional<Plan> planOpt = planRepository.findById(request.planId());
         if (planOpt.isEmpty()) {
-            return Optional.empty(); // Esto hará que el controlador devuelva 400
+            return Optional.empty();
         }
         Socio nuevo = request.aEntidad(planOpt.get());
         return Optional.of(socioRepository.save(nuevo));
