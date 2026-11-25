@@ -1,13 +1,15 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
+import co.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
+import co.cuerpoactivo.cuerpo_activo_api.exception.ReglaDeNegocioException;
+import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
 import co.cuerpoactivo.cuerpo_activo_api.repository.SocioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SocioService {
@@ -24,18 +26,16 @@ public class SocioService {
         return socioRepository.findAll();
     }
 
-    public Optional<Socio> buscarPorId(Long id) {
-        return socioRepository.findById(id);
+    public Socio buscarPorId(Long id) {
+        return socioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el socio con id " + id));
     }
 
-    public Optional<Socio> crear(SocioRequest request) {
-        if (request.planId() == null) {
-            return Optional.empty();
-        }
-        return planRepository.findById(request.planId()).map(plan -> {
-            Socio nuevo = request.aEntidad(plan);
-            nuevo.setId(null);
-            return socioRepository.save(nuevo);
-        });
+    public Socio crear(SocioRequest request) {
+        Plan plan = planRepository.findById(request.planId())
+                .orElseThrow(() -> new ReglaDeNegocioException("No existe el plan con id " + request.planId()));
+        Socio nuevo = request.aEntidad(plan);
+        nuevo.setId(null);
+        return socioRepository.save(nuevo);
     }
 }
