@@ -4,6 +4,7 @@ import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,31 +36,25 @@ public class PlanController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id) {
-        return planService.buscarPorId(id)
-                .map(plan -> ResponseEntity.ok(aRespuesta(plan)))
-                .orElse(ResponseEntity.notFound().build());
+    public PlanResponse buscarPorId(@PathVariable Long id) {
+        return aRespuesta(planService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crear(@Valid @RequestBody PlanRequest request) {
         Plan guardado = planService.guardar(aEntidad(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(aRespuesta(guardado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @RequestBody PlanRequest request) {
-        return planService.actualizar(id, aEntidad(request))
-                .map(plan -> ResponseEntity.ok(aRespuesta(plan)))
-                .orElse(ResponseEntity.notFound().build());
+    public PlanResponse actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest request) {
+        return aRespuesta(planService.actualizar(id, aEntidad(request)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        if (planService.eliminar(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        planService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 
     private Plan aEntidad(PlanRequest request) {

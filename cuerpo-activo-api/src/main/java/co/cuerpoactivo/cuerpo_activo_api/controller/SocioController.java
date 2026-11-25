@@ -3,8 +3,8 @@ package co.cuerpoactivo.cuerpo_activo_api.controller;
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
-import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
 import co.cuerpoactivo.cuerpo_activo_api.service.SocioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +21,9 @@ import java.util.List;
 public class SocioController {
 
     private final SocioService socioService;
-    private final PlanService planService;
 
-    public SocioController(SocioService socioService, PlanService planService) {
+    public SocioController(SocioService socioService) {
         this.socioService = socioService;
-        this.planService = planService;
     }
 
     @GetMapping
@@ -36,26 +34,14 @@ public class SocioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SocioResponse> buscarPorId(@PathVariable Long id) {
-        return socioService.buscarPorId(id)
-                .map(socio -> ResponseEntity.ok(aRespuesta(socio)))
-                .orElse(ResponseEntity.notFound().build());
+    public SocioResponse buscarPorId(@PathVariable Long id) {
+        return aRespuesta(socioService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<SocioResponse> crear(@RequestBody SocioRequest request) {
-        if (request.planId() == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return planService.buscarPorId(request.planId())
-                .map(plan -> {
-                    Socio socio = new Socio();
-                    socio.setNombre(request.nombre());
-                    socio.setPlan(plan);
-                    Socio guardado = socioService.guardar(socio);
-                    return ResponseEntity.status(HttpStatus.CREATED).body(aRespuesta(guardado));
-                })
-                .orElse(ResponseEntity.badRequest().build());
+    public ResponseEntity<SocioResponse> crear(@Valid @RequestBody SocioRequest request) {
+        Socio guardado = socioService.inscribir(request.nombre(), request.planId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(aRespuesta(guardado));
     }
 
     private SocioResponse aRespuesta(Socio socio) {
