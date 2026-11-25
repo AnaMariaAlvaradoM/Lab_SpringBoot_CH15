@@ -3,6 +3,7 @@ package co.cuerpoactivo.cuerpo_activo_api.controller;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,24 +34,23 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> buscarPorId(@PathVariable("id") Long id) {
-        return ResponseEntity.of(planService.buscarPorId(id).map(PlanResponse::desde));
+        return ResponseEntity.ok(PlanResponse.desde(planService.buscarPorId(id)));
     }
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crear(@Valid @RequestBody PlanRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(planService.crear(request)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanResponse> actualizar(@PathVariable("id") Long id, @RequestBody PlanRequest request) {
-        return ResponseEntity.of(planService.actualizar(id, request).map(PlanResponse::desde));
+    public ResponseEntity<PlanResponse> actualizar(
+            @PathVariable("id") Long id, @Valid @RequestBody PlanRequest request) {
+        return ResponseEntity.ok(PlanResponse.desde(planService.actualizar(id, request)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) {
-        if (!planService.eliminar(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        planService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }
