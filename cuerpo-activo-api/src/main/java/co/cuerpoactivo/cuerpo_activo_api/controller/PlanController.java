@@ -1,7 +1,9 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
-import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,19 +20,35 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> listarPlanes() {
+    public List<PlanResponse> listarPlanes() {
         return planService.buscarTodos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> obtenerPlanPorId(@PathVariable Long id) {
+    public ResponseEntity<PlanResponse> obtenerPlanPorId(@PathVariable Long id) {
         return planService.buscarPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Plan crearPlan(@RequestBody Plan plan) {
-        return planService.guardar(plan);
+    public ResponseEntity<PlanResponse> crearPlan(@RequestBody PlanRequest request) {
+        PlanResponse creado = planService.crear(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PlanResponse> actualizarPlan(@PathVariable Long id, @RequestBody PlanRequest cambios) {
+        return planService.actualizar(id, cambios)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarPlan(@PathVariable Long id) {
+        if (planService.eliminar(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

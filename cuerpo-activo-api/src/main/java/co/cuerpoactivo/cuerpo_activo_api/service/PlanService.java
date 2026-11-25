@@ -1,5 +1,7 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
 import org.springframework.stereotype.Service;
@@ -16,16 +18,39 @@ public class PlanService {
         this.planRepository = planRepository;
     }
 
-    public List<Plan> buscarTodos() {
-        return planRepository.buscarTodos();
+    public List<PlanResponse> buscarTodos() {
+        return planRepository.findAll().stream()
+                .map(PlanResponse::desde)
+                .toList();
     }
 
-    public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.buscarPorId(id);
+    public Optional<PlanResponse> buscarPorId(Long id) {
+        return planRepository.findById(id)
+                .map(PlanResponse::desde);
     }
 
-    public Plan guardar(Plan plan) {
+    public PlanResponse crear(PlanRequest request) {
+        Plan plan = request.aEntidad();
         plan.setId(null);
-        return planRepository.guardar(plan);
+        Plan guardado = planRepository.save(plan);
+        return PlanResponse.desde(guardado);
+    }
+
+    public Optional<PlanResponse> actualizar(Long id, PlanRequest cambios) {
+        return planRepository.findById(id).map(existente -> {
+            existente.setNombre(cambios.nombre());
+            existente.setDuracionMeses(cambios.duracionMeses());
+            existente.setPrecio(cambios.precio());
+            Plan actualizado = planRepository.save(existente);
+            return PlanResponse.desde(actualizado);
+        });
+    }
+
+    public boolean eliminar(Long id) {
+        if (!planRepository.existsById(id)) {
+            return false;
+        }
+        planRepository.deleteById(id);
+        return true;
     }
 }
