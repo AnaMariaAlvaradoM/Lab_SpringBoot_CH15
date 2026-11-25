@@ -3,6 +3,7 @@ package co.cuerpoactivo.cuerpo_activo_api.controller;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/planes")
@@ -33,28 +35,28 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> obtenerPorId(@PathVariable Long id) {
-        return planService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        PlanResponse plan = planService.buscarPorId(id)
+                .orElseThrow(() -> new NoSuchElementException("Plan no encontrado con id " + id));
+        return ResponseEntity.ok(plan);
     }
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crearPlan(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crearPlan(@Valid @RequestBody PlanRequest request) {
         PlanResponse creado = planService.guardar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanResponse> actualizarPlan(@PathVariable Long id, @RequestBody PlanRequest request) {
-        return planService.actualizar(id, request)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PlanResponse> actualizarPlan(@PathVariable Long id, @Valid @RequestBody PlanRequest request) {
+        PlanResponse actualizado = planService.actualizar(id, request)
+                .orElseThrow(() -> new NoSuchElementException("Plan no encontrado con id " + id));
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPlan(@PathVariable Long id) {
         if (!planService.eliminar(id)) {
-            return ResponseEntity.notFound().build();
+            throw new NoSuchElementException("Plan no encontrado con id " + id);
         }
         return ResponseEntity.noContent().build();
     }
