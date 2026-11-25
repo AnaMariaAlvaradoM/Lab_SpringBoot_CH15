@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+//import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,11 +55,11 @@ public class PlanController {
 //        }
 //        return null;
 
-        Optional<Plan> encontrado = planService.buscarPorId(id);
-        if (encontrado.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(PlanResponse.desde(encontrado.get()));
+        Plan encontrado = planService.buscarPorId(id);
+//        if (encontrado.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//
+        return ResponseEntity.ok(PlanResponse.desde(encontrado));
     }
 
     @PostMapping
@@ -74,20 +74,21 @@ public class PlanController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest request) {
-        Optional<Plan> actualizado = planService.actualizar(id, request);
-        if (actualizado.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(PlanResponse.desde(actualizado.get()));
+        Plan actualizado = planService.actualizar(id, request);
+//        if (actualizado.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+        return ResponseEntity.ok(PlanResponse.desde(actualizado));
+
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        boolean eliminado = planService.eliminar(id);
-        if (!eliminado) {
-            return ResponseEntity.notFound().build();
-        }
+        planService.eliminar(id);
+//        if (!eliminado) {
+//            return ResponseEntity.notFound().build();
+//        }
         return ResponseEntity.noContent().build();
     }
 
