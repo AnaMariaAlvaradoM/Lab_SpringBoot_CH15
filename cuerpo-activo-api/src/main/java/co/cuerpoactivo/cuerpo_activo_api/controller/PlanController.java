@@ -1,8 +1,14 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,18 +22,34 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> obtenerTodos() {
-        return planService.buscarTodos();
+    public List<PlanResponse> listar() {
+        return planService.buscarTodos()
+                .stream()
+                .map(PlanResponse::desde)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Plan obtenerPorId(@PathVariable Long id) {
-        return planService.buscarPorId(id).orElse(null);
+    public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id) {
+        Plan plan = planService.buscarPorId(id);
+        return ResponseEntity.ok(PlanResponse.desde(plan));
     }
 
     @PostMapping
-    public Plan crearPlan(@RequestBody Plan nuevoPlan) {
-        return planService.guardar(nuevoPlan);
+    public ResponseEntity<PlanResponse> crear(@Valid @RequestBody PlanRequest nuevo) {
+        Plan creado = planService.guardar(nuevo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(creado));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest cambios) {
+        Plan actualizado = planService.actualizar(id, cambios);
+        return ResponseEntity.ok(PlanResponse.desde(actualizado));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        planService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }
-
