@@ -1,10 +1,14 @@
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -19,30 +23,30 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> listar() {
-        return planService.buscarTodos(); // La lista no cambia
+    public List<PlanResponse> listar() {
+        return planService.buscarTodos().stream().map(PlanResponse::desde).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id) {
         Plan plan = planService.buscarPorId(id);
         if (plan != null) {
-            return ResponseEntity.ok(plan); // 200
+            return ResponseEntity.ok(PlanResponse.desde(plan));
         }
-        return ResponseEntity.notFound().build(); // 404
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Plan> crear(@RequestBody Plan nuevo) {
-        Plan creado = planService.guardar(nuevo);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado); // 201
+    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+        Plan creado = planService.guardar(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(creado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Plan> actualizar(@PathVariable Long id, @RequestBody Plan cambios) {
-        return planService.actualizar(id, cambios)
-                .map(ResponseEntity::ok) // Si existe, devuelve 200 con el plan
-                .orElseGet(() -> ResponseEntity.notFound().build()); // Si no, 404
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @RequestBody PlanRequest request) {
+        return planService.actualizar(id, request)
+                .map(plan -> ResponseEntity.ok(PlanResponse.desde(plan)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

@@ -4,12 +4,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Plan {
 
+    @OneToMany(mappedBy = "plan")
+    private List<Socio> socios = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String nombre;
@@ -57,4 +63,9 @@ public class Plan {
     public void setPrecio(int precio) {
         this.precio = precio;
     }
+
+    public List<Socio> getSocios() { return socios; }
+    public void setSocios(List<Socio> socios) { this.socios = socios; }
+
+
 }
