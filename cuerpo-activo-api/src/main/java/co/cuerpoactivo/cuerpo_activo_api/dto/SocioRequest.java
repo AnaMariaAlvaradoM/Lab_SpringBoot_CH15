@@ -1,0 +1,15 @@
+package co.cuerpoactivo.cuerpo_activo_api.dto;
+
+import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+
+public record SocioRequest(
+        @NotBlank(message = "El nombre es obligatorio") String nombre,
+        @NotNull(message = "El planId es obligatorio") Long planId
+) {
+    public Socio aEntidad(Plan plan) {
+        Socio s = new Socio();
+        s.setNombre(nombre);
+        s.setPlan(plan);
+        return s;
+    }
+}

@@ -1,0 +1,17 @@
+package co.cuerpoactivo.cuerpo_activo_api.dto;
+
+import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+
+public record PlanRequest(
+        @NotBlank(message = "El nombre es obligatorio") String nombre,
+        @Positive(message = "La duración debe ser mayor que cero") int duracionMeses,
+        @Positive(message = "El precio debe ser mayor que cero") int precio
+) {
+    public Plan aEntidad() {
+        Plan p = new Plan();
+        p.setNombre(nombre);
+        p.setDuracionMeses(duracionMeses);
+        p.setPrecio(precio);
+        return p;
+    }
+}
