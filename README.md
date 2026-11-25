@@ -151,7 +151,7 @@ En IntelliJ: **File → Open** → elige la carpeta `cuerpo-activo-api` (la que 
 
 ### 1.3 · La clase `Plan`
 
-En el paquete principal, crea el paquete `model` y dentro `Plan.java`:
+En el paquete principal, crea el paquete `Plan` y dentro `Plan.java`:
 
 | Atributo | Tipo |
 |---|---|
