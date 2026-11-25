@@ -198,11 +198,11 @@ Reorganiza lo de la fase 1 en tres capas. La API debe responder **igual** que an
 | `PlanRepository` (interfaz) | `repository` | Declara `buscarTodos()`, `buscarPorId(Long)` y `guardar(Plan)` |
 | `PlanRepositoryEnMemoria` | `repository` | `@Repository`. Implementa la interfaz con la lista de los 3 planes y un contador `siguienteId` que empieza en 4 |
 | `PlanService` | `service` | `@Service`. Recibe un `PlanRepository` **por su constructor** |
-| `PlanController` | `controller` | Recibe un `PlanService` **por su constructor**. Ya no tiene la lista |
+| `PlanService` | `controller` | Recibe un `PlanService` **por su constructor**. Ya no tiene la lista |
 
 ### ✅ Checklist de la fase 2
 
-- [ ] `PlanController` ya no tiene `new ArrayList` ni ningún `new` de servicios o repositorios.
+- [ ] `PlanService` ya no tiene `new ArrayList` ni ningún `new` de servicios o repositorios.
 - [ ] `buscarPorId` del repositorio devuelve `Optional<Plan>`.
 - [ ] El servicio pone `setId(null)` antes de guardar un plan nuevo.
 - [ ] Postman responde exactamente lo mismo que en la fase 1.
