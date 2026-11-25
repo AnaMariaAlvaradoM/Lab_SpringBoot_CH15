@@ -19,17 +19,17 @@ public class PlanService {
 
     // Listar todos los planes
     public List<Plan> listar() {
-        return planRepository.buscarTodos();
+        return planRepository.findAll();
     }
 
     // Buscar un plan por ID
     public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.buscarPorId(id);
+        return planRepository.findById(id);
     }
 
     // Crear un nuevo plan
     public Plan crear(Plan nuevo) {
         nuevo.setId(null);
-        return planRepository.guardar(nuevo);
+        return planRepository.save(nuevo);
     }
 }
