@@ -1,5 +1,15 @@
 package co.cuerpoactivo.cuerpo_activo_api.exception;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.ErrorResponse;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 @RestControllerAdvice
 public class ManejadorDeErrores {
 

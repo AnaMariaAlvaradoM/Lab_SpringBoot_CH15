@@ -1,8 +1,9 @@
 package co.cuerpoactivo.cuerpo_activo_api.dto;
 
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
-
-co.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record PlanResponse(Long id, String nombre, int duracionMeses, int precio) {
     public static PlanResponse desde(Plan plan) {
