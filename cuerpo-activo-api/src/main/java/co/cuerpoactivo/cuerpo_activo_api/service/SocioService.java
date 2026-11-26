@@ -52,7 +52,8 @@ public class SocioService {
     }
 
     public Socio actualizar(Long id, SocioRequest request) {
-        Socio encontrado = socioRepository.findById(id);
+        Socio encontrado = buscarPorId(id);
+
         Plan plan = planRepository.findById(request.planId())
                 .orElseThrow(() -> new ReglaDeNegocioException(
                         "No existe el plan con id " + request.planId()
@@ -64,7 +65,7 @@ public class SocioService {
         return socioRepository.save(encontrado);
     }
 
-    public boolean eliminar(Long id) {
+    public void eliminar(Long id) {
         Socio encontrado = buscarPorId(id);
         socioRepository.delete(encontrado);
     }
