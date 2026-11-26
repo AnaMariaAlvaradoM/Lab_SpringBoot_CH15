@@ -1,9 +1,11 @@
+
 package co.cuerpoactivo.cuerpo_activo_api.controller;
 
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioResponse;
 import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
 import co.cuerpoactivo.cuerpo_activo_api.service.SocioService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,21 +32,18 @@ public class SocioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SocioResponse> buscarPorId(@PathVariable Long id) {
-        return socioService.buscarPorId(id)
-                .map(SocioResponse::desde)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        Socio socio = socioService.buscarPorId(id);
+        return ResponseEntity.ok(SocioResponse.desde(socio));
     }
 
     @PostMapping
     public ResponseEntity<SocioResponse> crear(
-            @RequestBody SocioRequest solicitud) {
+            @Valid @RequestBody SocioRequest solicitud) {
 
-        return socioService.crear(solicitud)
-                .map(SocioResponse::desde)
-                .map(socio -> ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(socio))
-                .orElse(ResponseEntity.badRequest().build());
+        Socio nuevoSocio = socioService.crear(solicitud);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(SocioResponse.desde(nuevoSocio));
     }
 }
