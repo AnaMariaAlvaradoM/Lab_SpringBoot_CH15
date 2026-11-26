@@ -1,12 +1,16 @@
 package com.cuerpoactivo.cuerpo_activo_api.services;
 
 import com.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
+import com.cuerpoactivo.cuerpo_activo_api.dto.SocioResponse;
+import com.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
+import com.cuerpoactivo.cuerpo_activo_api.exception.ReglaDeNegocioException;
 import com.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import com.cuerpoactivo.cuerpo_activo_api.model.Socio;
 import com.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
 import com.cuerpoactivo.cuerpo_activo_api.repository.SocioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,23 +25,34 @@ public class SocioService {
         this.planRepository = planRepository;
     }
 
-    public List<Socio> listar() {
-        return socioRepository.findAll();
+    public List<SocioResponse> listar() {
+        List<Socio> socios = socioRepository.findAll();
+        List<SocioResponse> respuesta = new ArrayList<>();
+
+        for (Socio socio : socios) {
+            respuesta.add(SocioResponse.desde(socio));
+        }
+
+        return respuesta;
     }
 
-    public Optional<Socio> buscarPorId(Long id) {
-        return socioRepository.findById(id);
+    public SocioResponse buscarPorId(Long id) {
+        Optional<Socio> encontrado = socioRepository.findById(id);
+        if (encontrado.isEmpty()) {
+            throw new RecursoNoEncontradoException("Socio no encontrado con id: " + id);
+        }
+        return SocioResponse.desde(encontrado.get());
     }
 
-    public Optional<Socio> crear(SocioRequest datos) {
+    public SocioResponse crear(SocioRequest datos) {
         Optional<Plan> planEncontrado = planRepository.findById(datos.planId());
         if (planEncontrado.isEmpty()) {
-            return Optional.empty();
+            throw new ReglaDeNegocioException("El plan con id " + datos.planId() + " no existe");
         }
 
         Socio nuevoSocio = datos.aEntidad(planEncontrado.get());
         nuevoSocio.setId(null);
         Socio guardado = socioRepository.save(nuevoSocio);
-        return Optional.of(guardado);
+        return SocioResponse.desde(guardado);
     }
 }

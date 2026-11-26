@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/planes")
@@ -28,11 +27,8 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id) {
-        Optional<PlanResponse> plan = planService.buscarPorId(id);
-        if (plan.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(plan.get());
+        PlanResponse plan = planService.buscarPorId(id);
+        return ResponseEntity.ok(plan);
     }
 
     @PostMapping
@@ -43,19 +39,13 @@ public class PlanController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest datos) {
-        Optional<PlanResponse> actualizado = planService.actualizar(id, datos);
-        if (actualizado.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(actualizado.get());
+        PlanResponse actualizado = planService.actualizar(id, datos);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        boolean eliminado = planService.eliminar(id);
-        if (!eliminado) {
-            return ResponseEntity.notFound().build();
-        }
+        planService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }
