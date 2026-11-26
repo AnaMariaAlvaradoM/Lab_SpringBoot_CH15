@@ -4,6 +4,7 @@ import co.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
 import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.service.PlanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,13 +43,13 @@ public class PlanController {
     }
 
     @PostMapping
-    public ResponseEntity<PlanResponse> crear(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> crear(@Valid @RequestBody PlanRequest request) {
         Plan creado = planService.crear(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(PlanResponse.desde(creado));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @RequestBody PlanRequest request) {
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest request) {
         Optional<Plan> actualizado = planService.actualizar(id, request);
         if (actualizado.isEmpty()) {
             return ResponseEntity.notFound().build();
