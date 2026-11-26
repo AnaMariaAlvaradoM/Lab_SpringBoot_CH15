@@ -2,6 +2,9 @@ package co.cuerpoactivo.cuerpo_activo_api.service;
 
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,27 +23,40 @@ public class PlanService {
         return repository.findAll();
     }
 
-    public Optional<Plan> buscarPorId(Long id) {
-        return repository.findById(id);
+    public Plan buscarPorId(Long id) {
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException(
+                                "No existe el plan con id " + id));
     }
 
-    public Plan guardar(Plan plan) {
+    public Plan guardar(PlanRequest request) {
+        Plan plan = request.aEntidad();
         plan.setId(null);
         return repository.save(plan);
     }
 
-    public Optional<Plan> actualizar(Long id, Plan datosNuevos) {
-        return repository.findById(id)
-                .map(planExistente -> {
-                    planExistente.setNombre(datosNuevos.getNombre());
-                    planExistente.setDuracionMeses(datosNuevos.getDuracionMeses());
-                    planExistente.setPrecio(datosNuevos.getPrecio());
+    public Plan actualizar(Long id, PlanRequest request) {
 
-                    return repository.save(planExistente);
-                });
+        Plan planExistente = buscarPorId(id);
 
+        planExistente.setNombre(request.nombre());
+        planExistente.setDuracionMeses(request.duracionMeses());
+        planExistente.setPrecio(request.precio());
+
+        return repository.save(planExistente);
     }
+
     public void borrar(Long id){
+
+        if (!repository.existsById(id)) {
+
+            throw new RecursoNoEncontradoException(
+                    "No existe el plan con id " + id);
+        }
+
         repository.deleteById(id);
     }
+
 }
