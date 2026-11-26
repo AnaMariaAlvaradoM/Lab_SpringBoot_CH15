@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/planes")
@@ -35,11 +34,8 @@ public class PlanController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id){
-        Optional<Plan> encontrado = planService.buscarPorId(id);
-        if (encontrado.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(PlanResponse.desde(encontrado.get()));
+        Plan encontrado = planService.buscarPorId(id);
+        return ResponseEntity.ok(PlanResponse.desde(encontrado));
     }
 
     @PostMapping
@@ -50,19 +46,13 @@ public class PlanController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest request) {
-        Optional<Plan> actualizado = planService.actualizar(id, request);
-        if (actualizado.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(PlanResponse.desde(actualizado.get()));
+        Plan actualizado = planService.actualizar(id, request);
+        return ResponseEntity.ok(PlanResponse.desde(actualizado));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        boolean eliminado = planService.eliminar(id);
-        if (!eliminado) {
-            return ResponseEntity.notFound().build();
-        }
+        planService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }
