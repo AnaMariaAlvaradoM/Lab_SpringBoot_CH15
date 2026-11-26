@@ -31,13 +31,13 @@ public class SocioService {
         return socioRepository.findAll();
     }
 
-    public Optional<Socio> buscarPorId(Long id) {
+    public Socio buscarPorId(Long id) {
         return socioRepository.findById(id)
                 .orElseThrow(() ->
                         new RecursoNoEncontradoException(
                                 "No existe el socio con id " + id
                         )
-                );return socioRepository.findById(id);
+                );
     }
 
     public Socio crear(SocioRequest request) {
