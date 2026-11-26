@@ -2,6 +2,8 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
 import co.cuerpoactivo.cuerpo_activo_api.dto.SocioRequest;
+import co.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
+import co.cuerpoactivo.cuerpo_activo_api.exception.ReglaDeNegocioException;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.model.Socio;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
@@ -30,19 +32,24 @@ public class SocioService {
     }
 
     public Optional<Socio> buscarPorId(Long id) {
-        return socioRepository.findById(id);
+        return socioRepository.findById(id)
+                .orElseThrow(() ->
+                        new RecursoNoEncontradoException(
+                                "No existe el socio con id " + id
+                        )
+                );return socioRepository.findById(id);
     }
 
-    public Optional<Socio> crear(SocioRequest request) {
-        Optional<Plan> plan = planRepository.findById(request.planId());
+    public Socio crear(SocioRequest request) {
+        Plan plan = planRepository.findById(request.planId()).orElseThrow(() ->
+                new ReglaDeNegocioException(
+                        "No existe el plan con id " + request.planId()
+                )
+        );
 
-        if (plan.isEmpty()) {
-            return Optional.empty();
-        }
+        Socio nuevo = request.aEntidad(plan);
 
-        Socio nuevo = request.aEntidad(plan.get());
-
-        return Optional.of(socioRepository.save(nuevo));
+        return socioRepository.save(nuevo);
     }
 
     public Optional<Socio> actualizar(Long id, SocioRequest request) {

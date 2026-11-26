@@ -33,27 +33,19 @@ public class SocioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SocioResponse> buscarPorId(@PathVariable Long id) {
-        Optional<Socio> encontrado = socioService.buscarPorId(id);
+        Socio socio = socioService.buscarPorId(id);
 
-        if (encontrado.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(SocioResponse.desde(encontrado.get()));
+        return ResponseEntity.ok(SocioResponse.desde(socio));
     }
 
     @PostMapping
     public ResponseEntity<SocioResponse> crear(@Valid @RequestBody SocioRequest request) {
 
-        Optional<Socio> creado = socioService.crear(request);
-
-        if (creado.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+        Socio creado = socioService.crear(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(SocioResponse.desde(creado.get()));
+                .body(SocioResponse.desde(socio));
     }
 
     @PutMapping("/{id}")
