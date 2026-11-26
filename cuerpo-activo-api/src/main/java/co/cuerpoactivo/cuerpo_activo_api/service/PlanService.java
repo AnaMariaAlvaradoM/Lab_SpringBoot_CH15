@@ -1,10 +1,11 @@
 package co.cuerpoactivo.cuerpo_activo_api.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import co.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import co.cuerpoactivo.cuerpo_activo_api.exception.RecursoNoEncontradoException;
 import co.cuerpoactivo.cuerpo_activo_api.model.Plan;
 import co.cuerpoactivo.cuerpo_activo_api.repository.PlanRepository;
 
@@ -21,32 +22,29 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public Optional<Plan> buscarPorId(Long id) {
-        return planRepository.findById(id);
+    public Plan buscarPorId(Long id) {
+        return planRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el plan con id " + id));
     }
 
-    public Plan guardar(Plan nuevo) {
+    public Plan crear(PlanRequest request) {
+        Plan nuevo = request.aEntidad();
         nuevo.setId(null);
         return planRepository.save(nuevo);
     }
 
-    public Optional<Plan> actualizar(Long id, Plan cambios) {
-        Optional<Plan> existente = planRepository.findById(id);
-        if (existente.isEmpty()) {
-            return Optional.empty();
-        }
-        Plan plan = existente.get();
-        plan.setNombre(cambios.getNombre());
-        plan.setDuracionMeses(cambios.getDuracionMeses());
-        plan.setPrecio(cambios.getPrecio());
-        return Optional.of(planRepository.save(plan));
+    public Plan actualizar(Long id, PlanRequest request) {
+        Plan existente = buscarPorId(id);
+        existente.setNombre(request.nombre());
+        existente.setDuracionMeses(request.duracionMeses());
+        existente.setPrecio(request.precio());
+        return planRepository.save(existente);
     }
 
-    public boolean eliminar(Long id) {
+    public void eliminar(Long id) {
         if (!planRepository.existsById(id)) {
-            return false;
+            throw new RecursoNoEncontradoException("No existe el plan con id " + id);
         }
         planRepository.deleteById(id);
-        return true;
     }
 }
