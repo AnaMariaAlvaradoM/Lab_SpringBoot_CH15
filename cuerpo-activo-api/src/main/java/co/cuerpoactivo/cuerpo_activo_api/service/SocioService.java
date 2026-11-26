@@ -11,7 +11,6 @@ import co.cuerpoactivo.cuerpo_activo_api.repository.SocioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SocioService {
@@ -52,27 +51,21 @@ public class SocioService {
         return socioRepository.save(nuevo);
     }
 
-    public Optional<Socio> actualizar(Long id, SocioRequest request) {
-        Optional<Socio> encontrado = socioRepository.findById(id);
-        Optional<Plan> plan = planRepository.findById(request.planId());
+    public Socio actualizar(Long id, SocioRequest request) {
+        Socio encontrado = socioRepository.findById(id);
+        Plan plan = planRepository.findById(request.planId())
+                .orElseThrow(() -> new ReglaDeNegocioException(
+                        "No existe el plan con id " + request.planId()
+                ));
 
-        if (encontrado.isEmpty() || plan.isEmpty()) {
-            return Optional.empty();
-        }
+        encontrado.setNombre(request.nombre());
+        encontrado.setPlan(plan);
 
-        Socio socio = encontrado.get();
-        socio.setNombre(request.nombre());
-        socio.setPlan(plan.get());
-
-        return Optional.of(socioRepository.save(socio));
+        return socioRepository.save(encontrado);
     }
 
     public boolean eliminar(Long id) {
-        if (!socioRepository.existsById(id)) {
-            return false;
-        }
-
-        socioRepository.deleteById(id);
-        return true;
+        Socio encontrado = buscarPorId(id);
+        socioRepository.delete(encontrado);
     }
 }

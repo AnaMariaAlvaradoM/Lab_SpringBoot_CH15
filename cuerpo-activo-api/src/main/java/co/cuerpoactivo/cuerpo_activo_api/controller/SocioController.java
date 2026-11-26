@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/socios")
@@ -51,19 +50,17 @@ public class SocioController {
     @PutMapping("/{id}")
     public ResponseEntity<SocioResponse> actualizar(
             @PathVariable Long id,
-            @RequestBody SocioRequest request) {
+            @Valid @RequestBody SocioRequest request) {
 
-        return socioService.actualizar(id, request)
-                .map(socio -> ResponseEntity.ok(SocioResponse.desde(socio)))
-                .orElse(ResponseEntity.notFound().build());
+        Socio actualizado = socioService.actualizar(id, request);
+
+        return ResponseEntity.ok(SocioResponse.desde(actualizado));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
 
-        if (!socioService.eliminar(id)) {
-            return ResponseEntity.notFound().build();
-        }
+        socioService.eliminar(id);
 
         return ResponseEntity.noContent().build();
     }
