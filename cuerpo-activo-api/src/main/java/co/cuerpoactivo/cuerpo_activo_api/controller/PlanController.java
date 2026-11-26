@@ -59,10 +59,7 @@ public class PlanController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        if (!planService.eliminar(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
+        planService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }

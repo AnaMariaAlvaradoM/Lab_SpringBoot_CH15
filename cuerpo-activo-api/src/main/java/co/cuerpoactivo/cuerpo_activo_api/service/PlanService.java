@@ -43,12 +43,8 @@ public class PlanService {
         return planRepository.save(encontrado);
     }
 
-    public boolean eliminar(Long id) {
-        if (!planRepository.existsById(id)) {
-            return false;
-        }
-
-        planRepository.deleteById(id);
-        return true;
+    public void eliminar(Long id) {
+        Plan encontrado = buscarPorId(id);
+        planRepository.delete(encontrado);
     }
 }
