@@ -1,0 +1,39 @@
+
+### Consultar todos los planes
+GET http://localhost:8080/api/planes
+
+### Consultar un plan por ID
+GET http://localhost:8080/api/planes/2
+
+### Crear un plan
+POST http://localhost:8080/api/planes
+Content-Type: application/json
+
+{
+  "nombre": "Plan semestral",
+  "duracionMeses": 6,
+  "precio": 630000
+}
+
+### Actualizar un plan
+PUT http://localhost:8080/api/planes/4
+Content-Type: application/json
+
+{
+  "nombre": "Plan semestral actualizado",
+  "duracionMeses": 6,
+  "precio": 650000
+}
+
+### Consultar el plan actualizado
+GET http://localhost:8080/api/planes/4
+
+### Eliminar un plan
+DELETE http://localhost:8080/api/planes/4
+
+### Consultar el plan eliminado
+GET http://localhost:8080/api/planes/4
+### Eliminar un plan
+DELETE http://localhost:8080/api/planes/4
+### Consultar el plan eliminado
+GET http://localhost:8080/api/planes/4
