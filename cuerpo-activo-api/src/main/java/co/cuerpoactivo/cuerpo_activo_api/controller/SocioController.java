@@ -45,7 +45,7 @@ public class SocioController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(SocioResponse.desde(socio));
+                .body(SocioResponse.desde(creado));
     }
 
     @PutMapping("/{id}")
