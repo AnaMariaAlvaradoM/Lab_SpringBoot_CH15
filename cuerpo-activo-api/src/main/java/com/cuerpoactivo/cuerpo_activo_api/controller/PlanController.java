@@ -1,16 +1,11 @@
 package com.cuerpoactivo.cuerpo_activo_api.controller;
 
-import com.cuerpoactivo.cuerpo_activo_api.model.Plan;
+import com.cuerpoactivo.cuerpo_activo_api.dto.PlanRequest;
+import com.cuerpoactivo.cuerpo_activo_api.dto.PlanResponse;
+import com.cuerpoactivo.cuerpo_activo_api.services.PlanService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.cuerpoactivo.cuerpo_activo_api.services.PlanService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,37 +14,36 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/planes")
 public class PlanController {
+
     private final PlanService planService;
 
-    public PlanController(PlanService planservice) {
-        this.planService = planservice;
+    public PlanController(PlanService planService) {
+        this.planService = planService;
     }
 
     @GetMapping
-    public List<Plan> listar() {
+    public List<PlanResponse> listar() {
         return planService.listar();
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> buscarPorId(@PathVariable Long id) {
-        Optional<Plan> encontrado = planService.buscarPorId(id);
-        if (encontrado.isEmpty()) {
+    public ResponseEntity<PlanResponse> buscarPorId(@PathVariable Long id) {
+        Optional<PlanResponse> plan = planService.buscarPorId(id);
+        if (plan.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok((encontrado.get()));
+        return ResponseEntity.ok(plan.get());
     }
 
     @PostMapping
-    public ResponseEntity<Plan> crear(@Valid @RequestBody Plan nuevo) {
-        Plan creado = planService.crear(nuevo);
+    public ResponseEntity<PlanResponse> crear(@Valid @RequestBody PlanRequest datos) {
+        PlanResponse creado = planService.crear(datos);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Plan> actualizar(@PathVariable Long id, @RequestBody Plan datos) {
-        Optional<Plan> actualizado = planService.actualizar(id, datos);
+    public ResponseEntity<PlanResponse> actualizar(@PathVariable Long id, @Valid @RequestBody PlanRequest datos) {
+        Optional<PlanResponse> actualizado = planService.actualizar(id, datos);
         if (actualizado.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -64,5 +58,4 @@ public class PlanController {
         }
         return ResponseEntity.noContent().build();
     }
-
 }
